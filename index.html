@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Website</title>
     <style>
-        body {
-            background-color: black;
-            color: goldenrod;
-            font-family: Arial, sans-serif;
+        /* CSS animation */
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: #007bff;
+            transition: background-color 0.3s ease;
         }
-        header {
-            background: #333;
-            color: white;
-            padding: 1em;
-            text-align: center;
-        }
-        section {
-            margin: 2em;
+        .box:hover {
+            background-color: #ff6347;
         }
     </style>
 </head>
@@ -28,5 +24,7 @@
     <section>
         <p>This is a simple website hosted on GitHub Pages.</p>
     </section>
+    <!-- Add the animated box -->
+    <div class="box"></div>
 </body>
 </html>
