@@ -1,30 +1,77 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
+    <title>My Fancy Website</title>
     <style>
-        /* CSS animation */
+        /* Apply a beautiful golden background color */
+        body {
+            background-color: #FFD700;
+            color: #000000;
+            font-family: 'Cinzel', serif; /* Example of a fancy font */
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+        }
+
+        p {
+            font-size: 1.2em;
+        }
+
+        /* Sophisticated animation */
         .box {
             width: 100px;
             height: 100px;
             background-color: #007bff;
-            transition: background-color 0.3s ease;
+            margin: 20px auto;
+            animation: moveAndColor 3s infinite;
         }
-        .box:hover {
-            background-color: #ff6347;
+
+        @keyframes moveAndColor {
+            0% {
+                background-color: #007bff;
+                transform: translateY(0);
+            }
+            50% {
+                background-color: #ff6347;
+                transform: translateY(100px);
+            }
+            100% {
+                background-color: #007bff;
+                transform: translateY(0);
+            }
+        }
+
+        /* Style for the elephant image */
+        .elephant {
+            max-width: 100%;
+            height: auto;
+            margin: 20px auto;
+            display: block;
         }
     </style>
+    <!-- Link to Google Fonts for fancy font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Welcome to My Website</h1>
+        <h1>Welcome to My Fancy Website</h1>
     </header>
     <section>
-        <p>VAl val VAl Valy Val</p>
+        <p>Enjoy the elegance and charm of this beautifully designed webpage.</p>
     </section>
     <!-- Add the animated box -->
     <div class="box"></div>
+    <!-- Add an image of a smiling elephant -->
+    <img src="https://example.com/smiling-elephant.jpg" alt="Smiling Elephant" class="elephant">
 </body>
 </html>
