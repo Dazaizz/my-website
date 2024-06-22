@@ -119,6 +119,44 @@
             animation: moveAndColor 3s infinite reverse;
             margin: 10px;
         }
+
+        /* Hangman game styles */
+        .hangman-container {
+            margin-top: 50px;
+            font-size: 1.2em;
+        }
+
+        .word {
+            font-size: 2em;
+            letter-spacing: 10px;
+        }
+
+        .letters {
+            margin-top: 20px;
+        }
+
+        .letter {
+            display: inline-block;
+            width: 20px;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #000;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .letter.correct {
+            background-color: #32CD32;
+        }
+
+        .letter.incorrect {
+            background-color: #ff6347;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
     </style>
     <!-- Link to Google Fonts for fancy font -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
@@ -137,5 +175,85 @@
     <!-- Add some additional animated elements -->
     <div class="circle"></div>
     <div class="triangle"></div>
+
+    <!-- Hangman game container -->
+    <div class="hangman-container">
+        <div id="word" class="word">_ _ _ _ _</div>
+        <div id="letters" class="letters"></div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        // Hangman game logic
+        const words = ["ELEPHANT", "TIGER", "LION", "GIRAFFE", "ZEBRA"];
+        let selectedWord = words[Math.floor(Math.random() * words.length)];
+        let guessedLetters = [];
+        let correctGuesses = [];
+        let incorrectGuesses = 0;
+
+        const wordElement = document.getElementById("word");
+        const lettersElement = document.getElementById("letters");
+        const messageElement = document.getElementById("message");
+
+        function displayWord() {
+            let display = selectedWord.split("").map(letter => guessedLetters.includes(letter) ? letter : "_").join(" ");
+            wordElement.textContent = display;
+        }
+
+        function displayLetters() {
+            lettersElement.innerHTML = "";
+            for (let i = 65; i <= 90; i++) {
+                let letter = String.fromCharCode(i);
+                let letterElement = document.createElement("div");
+                letterElement.textContent = letter;
+                letterElement.className = "letter";
+                letterElement.addEventListener("click", () => guessLetter(letter));
+                lettersElement.appendChild(letterElement);
+            }
+        }
+
+        function guessLetter(letter) {
+            if (guessedLetters.includes(letter)) return;
+            guessedLetters.push(letter);
+
+            if (selectedWord.includes(letter)) {
+                correctGuesses.push(letter);
+                updateCorrectLetter(letter);
+                if (correctGuesses.length === new Set(selectedWord.split("")).size) {
+                    messageElement.textContent = "Congratulations! You've won!";
+                }
+            } else {
+                incorrectGuesses++;
+                updateIncorrectLetter(letter);
+                if (incorrectGuesses === 6) {
+                    messageElement.textContent = "Game over! The word was " + selectedWord;
+                }
+            }
+
+            displayWord();
+        }
+
+        function updateCorrectLetter(letter) {
+            let letters = document.getElementsByClassName("letter");
+            for (let i = 0; i < letters.length; i++) {
+                if (letters[i].textContent === letter) {
+                    letters[i].classList.add("correct");
+                }
+            }
+        }
+
+        function updateIncorrectLetter(letter) {
+            let letters = document.getElementsByClassName("letter");
+            for (let i = 0; i < letters.length; i++) {
+                if (letters[i].textContent === letter) {
+                    letters[i].classList.add("incorrect");
+                }
+            }
+        }
+
+        // Initialize game
+        displayWord();
+        displayLetters();
+    </script>
 </body>
 </html>
