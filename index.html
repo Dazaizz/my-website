@@ -3,294 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Fancy Website</title>
+    <title>Random Pixel Colors</title>
     <style>
-        /* Global styles */
+        /* CSS styles */
         body {
-            background-color: #FFD700;
-            color: #000000;
-            font-family: 'Cinzel', serif;
             margin: 0;
-            padding: 20px;
-            text-align: center;
+            padding: 0;
+            overflow: hidden; /* Remove scrollbars */
         }
 
-        header {
-            margin-bottom: 20px;
+        #pixelCanvas {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: repeat(100, 1fr); /* 100 columns */
+            grid-template-rows: repeat(100, 1fr); /* 100 rows */
         }
 
-        h1 {
-            font-size: 2.5em;
-        }
-
-        p {
-            font-size: 1.2em;
-        }
-
-        /* Hangman styles */
-        .hangman-container {
-            margin-top: 50px;
-            font-size: 1.2em;
-        }
-
-        .word {
-            font-size: 2em;
-            letter-spacing: 10px;
-        }
-
-        .letters {
-            margin-top: 20px;
-        }
-
-        .letter {
-            display: inline-block;
-            width: 20px;
-            height: 30px;
-            line-height: 30px;
-            border: 1px solid #000;
-            margin: 5px;
-            cursor: pointer;
-        }
-
-        .letter.correct {
-            background-color: #32CD32;
-        }
-
-        .letter.incorrect {
-            background-color: #ff6347;
-        }
-
-        .message {
-            margin-top: 20px;
-            font-size: 1.5em;
-        }
-
-        /* Snake game styles */
-        .snake-container {
-            margin-top: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .score {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        canvas {
-            background-color: #303030;
-            border: 2px solid #FFFFFF;
+        .pixel {
+            width: 100%;
+            height: 100%;
         }
     </style>
-    <!-- Link to Google Fonts for fancy font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Buy the ticket, take the ride</h1>
-    </header>
-    <section>
-        <p>Do elephants be smiling fr fr??.</p>
-    </section>
-    
-    <!-- Hangman game container -->
-    <div class="hangman-container">
-        <h2>Hangman Game</h2>
-        <div class="hangman">
-            <div class="rope"></div>
-            <div class="part head"></div>
-            <div class="part torso"></div>
-            <div class="part arm-left"></div>
-            <div class="part arm-right"></div>
-            <div class="part leg-left"></div>
-            <div class="part leg-right"></div>
-        </div>
-        <div id="word" class="word">_ _ _ _ _</div>
-        <div id="letters" class="letters"></div>
-        <div id="message" class="message"></div>
-    </div>
-
-    <!-- Snake game container -->
-    <div class="snake-container">
-        <h2>Snake Game</h2>
-        <div class="score">Score: <span id="snake-score">0</span></div>
-        <canvas id="snakeCanvas" width="400" height="400"></canvas>
-    </div>
-
+    <div id="pixelCanvas"></div>
     <script>
-        // Hangman game logic
-        const words = ["ELEPHANT", "TIGER", "LION", "GIRAFFE", "ZEBRA"];
-        let selectedWord = words[Math.floor(Math.random() * words.length)];
-        let guessedLetters = [];
-        let correctGuesses = [];
-        let incorrectGuesses = 0;
+        // JavaScript code
 
-        const wordElement = document.getElementById("word");
-        const lettersElement = document.getElementById("letters");
-        const messageElement = document.getElementById("message");
-        const hangmanParts = document.querySelectorAll(".hangman .part");
-
-        function displayWord() {
-            let display = selectedWord.split("").map(letter => guessedLetters.includes(letter) ? letter : "_").join(" ");
-            wordElement.textContent = display;
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
 
-        function displayLetters() {
-            lettersElement.innerHTML = "";
-            for (let i = 65; i <= 90; i++) {
-                let letter = String.fromCharCode(i);
-                let letterElement = document.createElement("div");
-                letterElement.textContent = letter;
-                letterElement.className = "letter";
-                letterElement.addEventListener("click", () => guessLetter(letter));
-                lettersElement.appendChild(letterElement);
+        function createPixel(x, y) {
+            const pixel = document.createElement('div');
+            pixel.className = 'pixel';
+            pixel.style.backgroundColor = getRandomColor();
+            return pixel;
+        }
+
+        function initializeCanvas() {
+            const canvas = document.getElementById('pixelCanvas');
+            const numberOfPixels = 100 * 100; // 100x100 grid
+
+            for (let i = 0; i < numberOfPixels; i++) {
+                const x = i % 100;
+                const y = Math.floor(i / 100);
+                const pixel = createPixel(x, y);
+                canvas.appendChild(pixel);
             }
         }
 
-        function guessLetter(letter) {
-            if (guessedLetters.includes(letter)) return;
-            guessedLetters.push(letter);
-
-            if (selectedWord.includes(letter)) {
-                correctGuesses.push(letter);
-                updateCorrectLetter(letter);
-                if (correctGuesses.length === new Set(selectedWord.split("")).size) {
-                    messageElement.textContent = "Congratulations! You've won!";
-                }
-            } else {
-                incorrectGuesses++;
-                updateIncorrectLetter(letter);
-                if (incorrectGuesses <= hangmanParts.length) {
-                    hangmanParts[incorrectGuesses - 1].style.display = "block";
-                }
-                if (incorrectGuesses === hangmanParts.length) {
-                    messageElement.textContent = "Game over! The word was " + selectedWord;
-                }
-            }
-
-            displayWord();
-        }
-
-        function updateCorrectLetter(letter) {
-            let letters = document.getElementsByClassName("letter");
-            for (let i = 0; i < letters.length; i++) {
-                if (letters[i].textContent === letter) {
-                    letters[i].classList.add("correct");
-                }
-            }
-        }
-
-        function updateIncorrectLetter(letter) {
-            let letters = document.getElementsByClassName("letter");
-            for (let i = 0; i < letters.length; i++) {
-                if (letters[i].textContent === letter) {
-                    letters[i].classList.add("incorrect");
-                }
-            }
-        }
-
-        // Initialize hangman game
-        displayWord();
-        displayLetters();
-
-        // Snake game logic
-        const snakeCanvas = document.getElementById('snakeCanvas');
-        const snakeCtx = snakeCanvas.getContext('2d');
-        const snakeScale = 20;
-        const snakeRows = snakeCanvas.height / snakeScale;
-        const snakeColumns = snakeCanvas.width / snakeScale;
-        let snake;
-        let snakeFruit;
-        let snakeScore = 0;
-
-        (function setupSnakeGame() {
-            snake = new Snake();
-            snakeFruit = new SnakeFruit();
-            snakeFruit.pickLocation();
-
-            window.setInterval(() => {
-                snakeCtx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
-                snakeFruit.draw();
-                snake.update();
-                snake.draw();
-
-                if (snake.eat(snakeFruit)) {
-                    snakeFruit.pickLocation();
-                    snakeScore++;
-                    document.getElementById('snake-score').textContent = snakeScore;
-                }
-
-                snake.checkCollision();
-            }, 150);
-
-            document.addEventListener('keydown', snakeDirection);
-        })();
-
-        function snakeDirection(event) {
-            const key = event.keyCode;
-            if (key === 37 && snake.xSpeed !== 1) { // Left arrow key
-                snake.setDirection(-1, 0);
-            } else if (key === 38 && snake.ySpeed !== 1) { // Up arrow key
-                snake.setDirection(0, -1);
-            } else if (key === 39 && snake.xSpeed !== -1) { // Right arrow key
-                snake.setDirection(1, 0);
-            } else if (key === 40 && snake.ySpeed !== -1) { // Down arrow key
-                snake.setDirection(0, 1);
-            }
-        }
-
-        function Snake() {
-            this.x = 0;
-            this.y = 0;
-            this.xSpeed = snakeScale * 1;
-            this.ySpeed = 0;
-            this.total = 0;
-            this.tail = [];
-
-            this.draw = function() {
-                snakeCtx.fillStyle = '#FFFFFF';
-                for (let i = 0; i < this.tail.length; i++) {
-                    snakeCtx.fillRect(this.tail[i].x, this.tail[i].y, snakeScale, snakeScale);
-                }
-                snakeCtx.fillRect(this.x, this.y, snakeScale, snakeScale);
-            };
-
-            this.update = function() {
-                for (let i = 0; i < this.tail.length - 1; i++) {
-                    this.tail[i] = this.tail[i + 1];
-                }
-
-                this.tail[this.total - 1] = { x: this.x, y: this.y };
-
-                this.x += this.xSpeed;
-                this.y += this.ySpeed;
-
-                if (this.x >= snakeCanvas.width) {
-                    this.x = 0;
-                }
-
-                if (this.y >= snakeCanvas.height) {
-                    this.y = 0;
-                }
-
-                if (this.x < 0) {
-                    this.x = snakeCanvas.width - snakeScale;
-                }
-
-                if (this.y < 0) {
-                    this.y = snakeCanvas.height - snakeScale;
-                }
-            };
-
-            this.setDirection = function(x, y) {
-                this.xSpeed = snakeScale * x;
-                this.ySpeed = snakeScale * y;
-            };
-
-            this.eat = function(fruit) {
-                if (this.x === fruit.x && this.y === fruit.y) {
-                    this.total++;
-                    return true;
-                }
+        // Initialize the canvas on page load
+        window.onload = initializeCanvas;
+    </script>
+</body>
+</html>
